@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "lkv-svitlo"
+version = "0.1.0"
+description = ""
+authors = ["Alex Verbovsky <alex.sanchos@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+pydantic = "^2.7.3"
+pydantic-settings = "^2.3.2"
+schedule = "^1.2.2"
+python-telegram-bot = "^21.3"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
