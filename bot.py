@@ -34,6 +34,8 @@ def create_db() -> None:
             )
             conn.commit()
 
+    print('DB created')
+
 
 def get_last_status() -> Optional[Tuple[int, bool]]:
     """
@@ -94,6 +96,7 @@ def post_to_channel(message: str):
 
 
 def check_status() -> None:
+    print('Check status...')
     current_status = get_device_status()
     status_from_db = get_last_status()
     if isinstance(status_from_db, tuple):
