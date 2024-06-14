@@ -1,17 +1,18 @@
 [tool.poetry]
 name = "svitlo-bot"
-version = "0.1.0"
-description = ""
+version = "0.1.1"
+description = "This script getting online status of Tuya's socket and sending electricity updates to the Telegram chanel"
 authors = ["Alex Verbovsky <alex.sanchos@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.32.3"
-pydantic = "^2.7.3"
-pydantic-settings = "^2.3.2"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.3"
 schedule = "^1.2.2"
-python-telegram-bot = "^21.3"
+pytz = "^2024.1"
 
 
 [tool.poetry.group.dev.dependencies]

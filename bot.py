@@ -1,8 +1,10 @@
 import sqlite3
 import time
 from contextlib import closing
+from datetime import datetime
 from typing import Optional, Tuple
 
+import pytz
 import requests
 import schedule
 
@@ -34,7 +36,7 @@ def create_db() -> None:
             )
             conn.commit()
 
-    print('DB created')
+    print("DB created")
 
 
 def get_last_status() -> Optional[Tuple[int, bool]]:
@@ -79,12 +81,13 @@ def insert_status(timestamp: int, status: bool) -> None:
             conn.commit()
 
 
-def post_to_channel(message: str):
+def post_to_channel(message: str, disable_notification: bool = False):
     """
     Sends a message to a specified Telegram channel using the Telegram Bot API.
 
     Args:
         message (str): The message text to send to the Telegram channel.
+        disable_notification (bool): if True send in silent
 
     The function constructs the URL for the Telegram Bot API's `sendMessage` endpoint,
     sets the necessary parameters including the chat ID and message text, and sends
@@ -92,11 +95,48 @@ def post_to_channel(message: str):
     """
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     params = {"chat_id": CHANNEL_ID, "text": message}
+    if disable_notification:
+        params["disable_notification"] = True
     requests.post(url, params=params)
 
 
+def format_time(hours: int, minutes: int) -> str:
+    if hours == 0 and minutes == 0:
+        return "менше хвилини"
+
+    days = hours // 24
+    hours = hours % 24
+
+    time_str = ""
+    if days > 0:
+        if days == 1:
+            time_str += "1 день "
+        elif days >= 2 and days <= 4:
+            time_str += f"{days} дні "
+        else:
+            time_str += f"{days} днів "
+
+    if hours > 0:
+        if hours == 1:
+            time_str += "1 годин "
+        elif hours >= 2 and hours <= 4:
+            time_str += f"{hours} години "
+        else:
+            time_str += f"{hours} годин "
+
+    if minutes > 0:
+        if minutes == 1:
+            time_str += "1 хвилину"
+        elif minutes >= 2 and minutes <= 4:
+            time_str += f"{minutes} хвилини"
+        else:
+            time_str += f"{minutes} хвилин"
+
+    return time_str
+
+
 def check_status() -> None:
-    print('Check status...')
+    print("Check status...")
     current_status = get_device_status()
     status_from_db = get_last_status()
     if isinstance(status_from_db, tuple):
@@ -120,17 +160,27 @@ def check_status() -> None:
         hours, remainder = divmod(time_diff, 3600)
         minutes, _ = divmod(remainder, 60)
 
+        # Get the current time in Kyiv timezone
+        kyiv_tz = pytz.timezone("Europe/Kyiv")
+        current_time = datetime.now(kyiv_tz).time()
+
+        # Check if the current time is between 23:00 and 9:00 AM
+        disable_notification = current_time.hour >= 23 or current_time.hour < 9
+
         # Є світло, коли не було
         if (current_status is True) and (last_status_in_db is False):
+            time_str = format_time(hours, minutes)
             post_to_channel(
-                f"Є світло 💡\n" f"Відключення тривало: {hours} годин {minutes} хвилин"
+                f"Є світло 💡\n" f"Відключення тривало: {time_str}",
+                disable_notification,
             )
 
-        # Пропало світло
+        # Зникло світло
         if (current_status is False or None) and (last_status_in_db is True):
+            time_str = format_time(hours, minutes)
             post_to_channel(
-                f"Світло відключили 🕯🔋\n"
-                f"Світло було: {hours} годин {minutes} хвилин"
+                f"Світло відключили 🕯🔋\n" f"Світло було: {time_str}",
+                disable_notification,
             )
 
 
