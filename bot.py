@@ -36,7 +36,7 @@ def create_db() -> None:
             )
             conn.commit()
 
-    print("DB created")
+    print("DB initialized")
 
 
 def get_last_status() -> Optional[Tuple[int, bool]]:
