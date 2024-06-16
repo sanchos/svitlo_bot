@@ -174,6 +174,7 @@ def check_status() -> None:
                 f"Є світло 💡\n" f"Відключення тривало: {time_str}",
                 disable_notification,
             )
+            time.sleep(600)
 
         # Зникло світло
         if (current_status is False or None) and (last_status_in_db is True):
