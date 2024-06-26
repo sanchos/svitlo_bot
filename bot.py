@@ -7,6 +7,7 @@ from typing import Optional, Tuple
 import pytz
 import requests
 import schedule
+from retrying import retry
 
 from config import settings
 from status import get_device_status
@@ -185,9 +186,14 @@ def check_status() -> None:
             )
 
 
+@retry(wait_fixed=2000)
+def check_status_with_retry() -> None:
+    check_status()
+
+
 def main() -> None:
     create_db()
-    schedule.every(settings.SCHEDULE_TIME).minutes.do(check_status)
+    schedule.every(settings.SCHEDULE_TIME).minutes.do(check_status_with_retry)
 
     while True:
         schedule.run_pending()
