@@ -171,21 +171,19 @@ def check_status() -> None:
         # Є світло, коли не було
         if (current_status is True) and (last_status_in_db is False):
             time_str = format_time(hours, minutes)
-            # post_to_channel(
-            #     f"Є світло 💡\n" f"Відключення тривало: {time_str}",
-            #     disable_notification,
-            # )
+            post_to_channel(
+                f"Є світло 💡\n" f"Відключення тривало: {time_str}",
+                disable_notification,
+            )
             #time.sleep(600)
-            print(f"Є світло 💡\n" f"Відключення тривало: {time_str}")
 
         # Зникло світло
         if (current_status is False or None) and (last_status_in_db is True):
             time_str = format_time(hours, minutes)
-            # post_to_channel(
-            #     f"Світло відключили 🕯🔋\n" f"Світло було: {time_str}",
-            #     disable_notification,
-            # )
-            print(f"Світло відключили 🕯🔋\n" f"Світло було: {time_str}")
+            post_to_channel(
+                f"Світло відключили 🕯🔋\n" f"Світло було: {time_str}",
+                disable_notification,
+            )
 
 
 #@retry(wait_fixed=2000)
