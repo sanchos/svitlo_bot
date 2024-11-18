@@ -4,8 +4,6 @@ import json
 import time
 
 import requests
-
-from auth import get_access_token
 from config import settings
 
 
@@ -41,32 +39,12 @@ def calc_sign(client_id, access_token, timestamp, nonce, sign_str, secret):
     return signature
 
 
-def get_device_status(device_id: str = settings.DEVICE_ID):
-    base_path = "v1.0/devices"
-    url = f"{settings.BASE_URL}/{base_path}/{device_id}"
-    access_token = (
-        get_access_token()
-    )  # Assuming you have a function that retrieves a valid access token
-    timestamp = get_timestamp()
-    nonce = ""
-    headers = {
-        "client_id": settings.CLIENT_ID,
-        "sign_method": "HMAC-SHA256",
-        "t": timestamp,
-        "access_token": access_token,
-        "nonce": nonce,
-    }
-
-    sign_str = generate_sign_str({}, None, "GET", headers, f"{base_path}/{device_id}")
-    signature = calc_sign(
-        settings.CLIENT_ID, access_token, timestamp, nonce, sign_str, settings.SECRET
-    )
-    headers["sign"] = signature
-
-    response = requests.get(url, headers=headers)
+def get_device_status():
+    url = f"{settings.BASE_URL}/api/status"
+    response = requests.get(url)
     response.raise_for_status()
-    result = response.json()["result"]["online"]
-    return result
+    result = response.json()["status"]
+    return result == "OK"
 
 
 if __name__ == "__main__":

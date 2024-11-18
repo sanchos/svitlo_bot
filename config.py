@@ -17,9 +17,6 @@ class Settings(BaseSettings):
     """
 
     BASE_URL: str
-    CLIENT_ID: str
-    SECRET: str
-    DEVICE_ID: str
     DB_FILE: str
     BOT_TOKEN: str
     CHANNEL_ID: str
