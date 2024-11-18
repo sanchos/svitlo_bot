@@ -188,7 +188,7 @@ def check_status() -> None:
             print(f"Світло відключили 🕯🔋\n" f"Світло було: {time_str}")
 
 
-@retry(wait_fixed=2000)
+#@retry(wait_fixed=2000)
 def check_status_with_retry() -> None:
     check_status()
 
@@ -196,6 +196,7 @@ def check_status_with_retry() -> None:
 def main() -> None:
     create_db()
     check_status_with_retry()
+
 
 if __name__ == "__main__":
     main()
